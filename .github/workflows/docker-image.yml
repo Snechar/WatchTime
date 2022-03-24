@@ -36,7 +36,7 @@ jobs:
           file: ./src/event-bus/EventBus/Dockerfile
 
           # Note: tags has to be all lower-case
-          tags: watchtime/eventbus:latest
+          tags: snechar/eventbus:latest
 
           # build on feature branches, push only on master branch
           push: ${{ github.ref == 'refs/heads/main' }}

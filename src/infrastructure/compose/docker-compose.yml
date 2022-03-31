@@ -1,0 +1,37 @@
+version: '3'
+services:
+  #Nats Service
+  nats:
+    image: nats
+    container_name: nats
+    ports:
+      - ${NATS_PORT}:4222
+      - ${NATS_MONITORING_PORT}:8222
+    networks:
+      - network-name
+
+  #SQL Express
+  sql-express:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sql-express
+    env_file: .sql-express.env
+    ports:
+      - ${SQL_EXPRESS_PORT}:1433
+    networks:
+      - network-name
+
+  #Event Bus
+  eventbus:
+    image:  watchtime/eventbus
+    container_name: eventbus
+    depends_on:
+      - nats
+      - sql-express
+    ports:
+      - ${EVENT_BUS_PORT}:4444
+    networks:
+      - network-name
+
+networks:
+  network-name:
+    name: watchtime

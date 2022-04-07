@@ -1,4 +1,4 @@
-name: event-bus
+name: account-microservice
 
 on:
   # run it on push to the default repository branch
@@ -31,9 +31,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./src/event-bus
+          context: ./src/account-microservice
 
-          file: ./src/event-bus/EventBus/Dockerfile
+          file: ./src/account-microservice/account-microservice/Dockerfile
 
           # Note: tags has to be all lower-case
           tags: snechar/eventbus:latest

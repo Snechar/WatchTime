@@ -78,12 +78,6 @@ namespace account_microservice.Consumers
                 AccountLogin account = System.Text.Json.JsonSerializer.Deserialize<AccountLogin>(decodedMessage);
                 Response response = Login(account).Result;
                 _connection.Publish(args.Message.Reply, Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(response)));
-
-                //ApplicationUser user = userManager.FindByNameAsync(decodedMessage).Result;
-                //var token = jWTOperations.GenerateTokenAsync(user);
-                //var result = jWTOperations.ValidateToken(token);
-
-
             }
             catch (Exception)
             {
@@ -174,7 +168,7 @@ namespace account_microservice.Consumers
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             IAsyncSubscription sCreateAcccount = _connection.SubscribeAsync("account.create", "load-balancing-queue-account", hCreateAccount);
-            IAsyncSubscription sLogin = _connection.SubscribeAsync("account.create", "load-balancing-queue-account", hLogin);
+            IAsyncSubscription sLogin = _connection.SubscribeAsync("account.login", "load-balancing-queue-account", hLogin);
             IAsyncSubscription sCheckRoles = _connection.SubscribeAsync("account.check", hCheck);
             Console.WriteLine("Event Bus Hosted Service has been started");
             return Task.CompletedTask;

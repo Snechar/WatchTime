@@ -42,6 +42,7 @@ namespace Requester
                 Console.WriteLine($"Sent {message} ");
                 var responseData = c.Request(channel, Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(request)));
                 var receivedOrder = Encoding.UTF8.GetString(responseData.Data);
+                Console.WriteLine(receivedOrder);
 
 
             }

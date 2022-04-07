@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace account_microservice
+namespace event_bus
 {
     public class Program
     {
@@ -20,9 +20,7 @@ namespace account_microservice
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseHealthEndpoints();
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseKestrel(options => options.AllowSynchronousIO = true);
                 });
     }
 }

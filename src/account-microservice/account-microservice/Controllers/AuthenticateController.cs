@@ -1,4 +1,5 @@
 ﻿using account_microservice.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,48 @@ namespace account_microservice.Controllers
                 _configuration = configuration;
             }
 
-            [HttpPost]
+        [HttpPost]
+        [Route("Renew")]
+        [Authorize]
+        public async Task<IActionResult> Renew()
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (user != null)
+            {
+                var userRoles = await userManager.GetRolesAsync(user);
+
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+                foreach (var userRole in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                }
+
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JWT:ValidIssuer"],
+                    audience: _configuration["JWT:ValidAudience"],
+                    expires: DateTime.Now.AddHours(24),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                    );
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                });
+            }
+            return Unauthorized();
+
+        }
+
+        [HttpPost]
             [Route("login")]
             public async Task<IActionResult> Login([FromBody] LoginModel model)
             {
@@ -54,7 +96,7 @@ namespace account_microservice.Controllers
                     var token = new JwtSecurityToken(
                         issuer: _configuration["JWT:ValidIssuer"],
                         audience: _configuration["JWT:ValidAudience"],
-                        expires: DateTime.Now.AddHours(3),
+                        expires: DateTime.Now.AddHours(24),
                         claims: authClaims,
                         signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                         );
@@ -86,13 +128,19 @@ namespace account_microservice.Controllers
                     UserName = model.Username
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
-                if (!result.Succeeded)
+                userManager.AddToRoleAsync(user, "User").Wait();
+
+            if (!result.Succeeded)
+            {
                     return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = result.ToString() });
 
-                return Ok(new Response { Status = "Success", Message = "User created successfully!" });
             }
+            
 
-            [HttpPost]
+            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
             [Route("register-admin")]
             public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
             {

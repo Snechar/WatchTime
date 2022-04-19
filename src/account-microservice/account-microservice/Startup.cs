@@ -35,6 +35,12 @@ namespace account_microservice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Showcase", Version = "v1" });
+            });
             // For Entity Framework  
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnStr")));
 
@@ -65,15 +71,32 @@ namespace account_microservice
                 };
             });
             services.AddHealthEndpoints();
-            IConnection _con = AddNatsClient();
-            services.AddSingleton<IConnection>(x=> _con);
-            services.AddHostedService<EventBusConsumer>();
+            //IConnection _con = AddNatsClient();
+            //services.AddSingleton<IConnection>(x=> _con);
+            //services.AddHostedService<EventBusConsumer>();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
         {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Showcase v1"));
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
             IdentityDataInitializer.SeedData(userManager, roleManager, context);
             app.UseHealthEndpoint();
         }

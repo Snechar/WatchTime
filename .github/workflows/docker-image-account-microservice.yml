@@ -36,7 +36,7 @@ jobs:
           file: ./src/account-microservice/account-microservice/Dockerfile
 
           # Note: tags has to be all lower-case
-          tags: snechar/eventbus:latest
+          tags: snechar/accountmicroservice:latest
 
           # build on feature branches, push only on master branch
           push: ${{ github.ref == 'refs/heads/main' }}

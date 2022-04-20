@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: watchtime.com
+      http:
+        paths:
+          - path: /nats
+            pathType: Prefix
+            backend:
+              service:
+                name: nats-service
+                port:
+                  number: 4222
+
+
+

@@ -16,3 +16,20 @@ spec:
         - name: account
           image: snechar/accountmicroservice:latest
 
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: account-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: account
+  ports:
+  - name: account
+    protocol: TCP
+    port: 80
+    targetPort: 80
+
+

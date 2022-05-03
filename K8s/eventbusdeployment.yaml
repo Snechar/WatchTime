@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventbus
+  labels:
+    app: eventbus
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eventbus
+  template:
+    metadata:
+      labels:
+        app: eventbus
+    spec:
+      containers:
+      - name: eventbus
+        image: snechar/eventbus
+        ports:
+        - containerPort: 25565

@@ -48,7 +48,7 @@ namespace event_bus
         {
             ConnectionFactory cf = new ConnectionFactory();
             Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = "nats://host.docker.internal:4222";
+            opts.Url = "nats://localhost:31000";
             opts.Timeout = 15500;
             IConnection c = cf.CreateConnection(opts);
             return c;

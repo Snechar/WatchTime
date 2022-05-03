@@ -15,21 +15,23 @@ spec:
       containers:
         - name: account
           image: snechar/accountmicroservice:latest
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: account-clusterip-service
+  name: account-clusterip-srv
 spec:
   type: ClusterIP
   selector:
     app: account
   ports:
-  - name: account
-    protocol: TCP
-    port: 80
-    targetPort: 80
+   - name: account-srv
+     protocol: TCP
+     port: 80
+     targetPort: 80
+   - name: accountgrpc
+     protocol: TCP
+     port: 666
+     targetPort: 666
 
 

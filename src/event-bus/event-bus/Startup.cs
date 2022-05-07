@@ -48,7 +48,7 @@ namespace event_bus
         {
             ConnectionFactory cf = new ConnectionFactory();
             Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = "nats://localhost:31000";
+            opts.Url = "nats://watchtime.com:31480";
             opts.Timeout = 15500;
             IConnection c = cf.CreateConnection(opts);
             return c;

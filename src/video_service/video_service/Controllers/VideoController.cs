@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using video_service.Model;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace video_service.Controllers
@@ -74,7 +76,64 @@ namespace video_service.Controllers
                 Response.ContentType = "text/plain";
                 Response.Headers["string"] = "Could not find song";
             }
+
+
            
+        }
+
+        [HttpPost("post-video")]
+        public async Task PostVideo([FromForm] VideoUploadModel model)
+        {
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            try
+            {
+                string[] validExtensions = { ".mp4", ".mov" };
+                if (model.file.Length > 0)
+                {
+                    string workingDirectory = Environment.CurrentDirectory;
+                    string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
+                    string videoPathFile = Path.Combine(workingDirectory, $"Files\\");
+                    string ID = Guid.NewGuid().ToString("N");
+                    if (!validExtensions.Contains(Path.GetExtension(model.file.FileName)))
+                    {
+                        Console.WriteLine("Incorrect extension");
+                        Response.StatusCode = 500;
+                        Response.ContentType = "text/plain";
+                        Response.Headers["string"] = "Invalid file format";
+                        
+                    }
+
+                    using (FileStream fileStream = System.IO.File.Create(videoPathFile + ID + Path.GetExtension(model.file.FileName)))
+                    {
+                        model.file.CopyTo(fileStream);
+                        fileStream.Flush();
+                        Console.WriteLine($"Added file {model.file.FileName}, with author hey");
+
+                        Response.StatusCode = 200;
+                        Response.ContentType = "text/plain";
+                        Response.Headers["string"] = "Uploaded";
+                    }
+
+                }
+                else
+                {
+                    throw new Exception("Could not upload file");
+                }
+            }
+            catch (Exception)
+            {
+                Response.StatusCode = 500;
+                Response.ContentType = "text/plain";
+                Response.Headers["string"] = "Error";
+            }
         }
         public static DirectoryInfo TryGetSolutionDirectoryInfo(string currentPath = null)
         {

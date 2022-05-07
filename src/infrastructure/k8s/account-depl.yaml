@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: account-depl
 spec:
-  replicas: 2
+  #replicas: 3
   selector:
     matchLabels:
       app: account
@@ -15,6 +15,16 @@ spec:
       containers:
         - name: account
           image: snechar/accountmicroservice:latest
+          resources:
+          # You need to specify the metric the HPA object will reference
+          # kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+           limits:
+             cpu: 200m
+             memory: 500Mi
+           requests:
+             cpu: 100m
+             memory: 200Mi
+
 ---
 apiVersion: v1
 kind: Service

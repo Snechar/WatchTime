@@ -17,5 +17,12 @@ spec:
                 name: account-clusterip-srv
                 port:
                   number: 80
+          - path: /eventbus
+            pathType: Prefix
+            backend:
+              service:
+                name: nats-clusterip-srv
+                port:
+                  number: 4222
           
 

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.IO;
 using System.Linq;
@@ -80,42 +82,35 @@ namespace video_service.Controllers
 
            
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("post-video")]
-        public async Task PostVideo([FromForm] VideoUploadModel model)
+        public async Task PostVideo([FromForm]VideoUploadModel data)
         {
+            var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            Console.WriteLine(_bearer_token);
             try
             {
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            try
-            {
+                var file = data.file;
                 string[] validExtensions = { ".mp4", ".mov" };
-                if (model.file.Length > 0)
+                if (file.Length > 0)
                 {
                     string workingDirectory = Environment.CurrentDirectory;
                     string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
                     string videoPathFile = Path.Combine(workingDirectory, $"Files\\");
                     string ID = Guid.NewGuid().ToString("N");
-                    if (!validExtensions.Contains(Path.GetExtension(model.file.FileName)))
+                    if (!validExtensions.Contains(Path.GetExtension(file.FileName)))
                     {
-                        Console.WriteLine("Incorrect extension");
                         Response.StatusCode = 500;
                         Response.ContentType = "text/plain";
                         Response.Headers["string"] = "Invalid file format";
                         
                     }
 
-                    using (FileStream fileStream = System.IO.File.Create(videoPathFile + ID + Path.GetExtension(model.file.FileName)))
+                    using (FileStream fileStream = System.IO.File.Create(videoPathFile + ID + Path.GetExtension(file.FileName)))
                     {
-                        model.file.CopyTo(fileStream);
+                        file.CopyTo(fileStream);
                         fileStream.Flush();
-                        Console.WriteLine($"Added file {model.file.FileName}, with author hey");
+                        Console.WriteLine($"Added file {file.FileName}, with author hey");
 
                         Response.StatusCode = 200;
                         Response.ContentType = "text/plain";

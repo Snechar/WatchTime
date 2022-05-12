@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using video_service.Context;
 
 namespace video_service
 {
@@ -29,7 +31,7 @@ namespace video_service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<VideoContext>(options => options.UseSqlServer("Server=host.docker.internal,1433;Database=VideoDB;User ID=SA;Password=1Secure*Password1;"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

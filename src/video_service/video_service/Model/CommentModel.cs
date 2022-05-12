@@ -19,5 +19,6 @@ namespace video_service.Model
         public int Likes { get; set; }
 
         public int Dislikes { get; set; }
+        public List<LikeModel> LikeList { get; set; }
     }
 }

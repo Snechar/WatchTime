@@ -1,10 +1,3 @@
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: local-storage
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
----
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -17,7 +10,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
-    path: /data/volumes/pv1
+    path: /var/lib/docker/volumes/vol1
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -25,12 +18,12 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k8s-worker-01
+          - docker-desktop
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: test-pvc
+  name: test-pvc2
 spec:
   accessModes:
   - ReadWriteOnce

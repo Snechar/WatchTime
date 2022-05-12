@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using video_service.Context;
 using video_service.Model;
@@ -39,8 +40,7 @@ namespace video_service.Controllers
         {
             try
             {
-                string workingDirectory = Environment.CurrentDirectory;
-                string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
+                string workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 string videoPathFile = Path.Combine(workingDirectory, $"Files\\{file}.mp4");
                 string[] validExtensions = { ".mp4", ".mov" };
                 if (!System.IO.File.Exists(videoPathFile))
@@ -110,9 +110,10 @@ namespace video_service.Controllers
             }
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("post-video")]
+        [HttpPost("postvideo")]
         public async Task PostVideo([FromForm]VideoUploadModel data)
         {
+            
             var identity = User.Identity.Name;
             Console.WriteLine(identity);
             var id =  User.FindFirst("id").Value;
@@ -131,24 +132,33 @@ namespace video_service.Controllers
                 }
                 if (file.Length > 0)
                 {
-                    string workingDirectory = Environment.CurrentDirectory;
-                    string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
+                    Console.WriteLine("Got here");
+                    string workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
                     string videoPathFile = Path.Combine(workingDirectory, $"Files\\");
                     string ID = Guid.NewGuid().ToString("N");
                     string IDVideo = Guid.NewGuid().ToString("N");
-                    if (!validExtensions.Contains(Path.GetExtension(file.FileName)))
+                    if (!validExtensions.Contains(Path.GetExtension(Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName)))))
                     {
+                        Console.WriteLine("Got here");
                         Response.StatusCode = 500;
                         Response.ContentType = "text/plain";
                         Response.Headers["string"] = "Invalid file format";
                         
                     }
-
+                    Console.WriteLine("Got here3");
+                    Console.WriteLine(videoPathFile + IDVideo + Path.GetExtension(Convert.ToBase64String(Encoding.UTF8.GetBytes(file.FileName))));
+                    bool exists = System.IO.Directory.Exists(videoPathFile);
+                    if (!exists)
+                    {
+                        System.IO.Directory.CreateDirectory(videoPathFile);
+                    }
                     using (FileStream fileStream = System.IO.File.Create(videoPathFile + IDVideo + Path.GetExtension(file.FileName)))
                     {
+                        Console.WriteLine("Got here4");
                         file.CopyTo(fileStream);
                         fileStream.Flush();
                         Console.WriteLine($"Added file {IDVideo}, with author {identity}");
+                        Console.WriteLine("Got here5");
 
                         if (_context.channelModels.FirstOrDefault(x => x.Id == id) != null)
                         {
@@ -165,17 +175,17 @@ namespace video_service.Controllers
                         else
                         {
                             UserModel channelUser;
-                            if (_context.userModels.FirstOrDefault(x=>x.Id == id) != null)
+                            if (_context.userModels.FirstOrDefault(x => x.Id == id) != null)
                             {
-                                 channelUser = _context.userModels.FirstOrDefault(x => x.Id == id);
+                                channelUser = _context.userModels.FirstOrDefault(x => x.Id == id);
                             }
                             else
                             {
-                                 channelUser = new UserModel() { Id = id, Name = identity };
+                                channelUser = new UserModel() { Id = id, Name = identity };
                             }
                             var dbDataChannel = new ChannelModel()
                             {
-                                Id = ID, 
+                                Id = ID,
                                 Channel = channelUser
                             };
                             await _context.channelModels.AddAsync(dbDataChannel);
@@ -191,7 +201,7 @@ namespace video_service.Controllers
                             await _context.SaveChangesAsync();
 
                         }
-
+                        Console.WriteLine("Got here6");
                         Response.StatusCode = 200;
                         Response.ContentType = "text/plain";
                         Response.Headers["string"] = "Uploaded";
@@ -205,11 +215,11 @@ namespace video_service.Controllers
                     throw new Exception("Could not upload file");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Response.StatusCode = 500;
                 Response.ContentType = "text/plain";
-                Response.Headers["string"] = "Error";
+                Response.Headers["string"] = $"{ex}";
             }
         }
         public static DirectoryInfo TryGetSolutionDirectoryInfo(string currentPath = null)

@@ -24,5 +24,13 @@ spec:
                 name: nats-clusterip-srv
                 port:
                   number: 4222
+          - path : /api/video
+            pathType: Prefix
+            backend:
+              service:
+                name: videoservice-clusterip-srv
+                port:
+                  number: 80
+
           
 

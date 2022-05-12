@@ -44,7 +44,7 @@ namespace account_microservice
 
 
             // For Entity Framework  
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Server=localhost,1433;Database=User;User ID=SA;Password=1Secure*Password1;"));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Server=host.docker.internal,1433;Database=User;User ID=SA;Password=1Secure*Password1;"));
 
             // For Identity  
             services.AddIdentity<ApplicationUser, IdentityRole>()

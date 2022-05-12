@@ -22,7 +22,7 @@ services:
 
   #Event Bus
   eventbus:
-    image:  watchtime/eventbus
+    image:  snechar/eventbus
     container_name: eventbus
     depends_on:
       - nats

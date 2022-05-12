@@ -21,8 +21,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nats-srv
+  name: nats-clusterip-srv
 spec:
+  type: NodePort
   selector:
     app: nats
   ports:

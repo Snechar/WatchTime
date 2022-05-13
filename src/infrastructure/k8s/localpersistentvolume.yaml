@@ -10,7 +10,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
-    path: /var/lib/docker/volumes/vol1
+    path: /data/pv0001
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -18,12 +18,12 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - docker-desktop
+          - minikube
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: test-pvc2
+  name: test-pvc
 spec:
   accessModes:
   - ReadWriteOnce

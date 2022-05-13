@@ -12,12 +12,17 @@ spec:
       labels:
         app: videoservice
     spec:
-      nodeName: docker-desktop
+    #  volumes:
+     #  - name: test-pvc
+      #   persistentVolumeClaim:
+       #    claimName: test-pvc
       containers:
         - name: videoservice
           image: snechar/videoservice:latest
-
+          ports:
+          - containerPort: 80
           resources:
+
           # You need to specify the metric the HPA object will reference
           # kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
            limits:
@@ -25,7 +30,10 @@ spec:
              memory: 500Mi
            requests:
              cpu: 100m
-             memory: 200Mi   
+             memory: 200Mi 
+         # volumeMounts:
+          #   - mountPath: "/data/pv0001/videos"
+           #    name: test-pvc 
 ---
 apiVersion: v1
 kind: Service

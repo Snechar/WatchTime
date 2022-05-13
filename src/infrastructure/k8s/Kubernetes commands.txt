@@ -6,3 +6,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 Keel
 kubectl apply -f https://sunstone.dev/keel?namespace=default&username=admin&password=admin&tag=latest
+
+Dashboard
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml

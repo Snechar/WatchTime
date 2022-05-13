@@ -15,15 +15,19 @@ spec:
       containers:
         - name: account
           image: snechar/accountmicroservice:latest
+          ports:
+          - containerPort: 80
           resources:
           # You need to specify the metric the HPA object will reference
           # kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+          #kubectl -n kubernetes-dashboard create token admin-user
            limits:
              cpu: 200m
              memory: 500Mi
            requests:
              cpu: 100m
              memory: 200Mi
+          
 
 ---
 apiVersion: v1
@@ -37,8 +41,8 @@ spec:
   ports:
    - name: account-srv
      protocol: TCP
-     port: 80
-     targetPort: 80
+     port: 25565
+     targetPort: 25565
    - name: accountgrpc
      protocol: TCP
      port: 666

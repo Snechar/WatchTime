@@ -14,7 +14,7 @@ export default function Login() {
     <hr />
     <video id="mainPlayer" width="1280" height="720" 
         autoPlay="autoplay" controls="controls">
-        <source src={`http://watchtime.com/api/Video/${video}`} />
+        <source src={`http://watchtime.com/api/video/${video}`} />
     </video>
     </div>
   );

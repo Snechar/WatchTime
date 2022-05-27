@@ -41,6 +41,7 @@ namespace video_service.Controllers
             try
             {
                 string workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                Console.WriteLine(workingDirectory);
                 string videoPathFile = Path.Combine(workingDirectory, $"Files\\{file}.mp4");
                 string[] validExtensions = { ".mp4", ".mov" };
                 if (!System.IO.File.Exists(videoPathFile))

@@ -8,30 +8,30 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: 2048m
 spec:
   rules:
-    - host: watchtimesnechar.com
+    - host: watchtime.com
       http:
         paths:
-          - path: "/api/authenticate/login"
+          - path: /api/authenticate/login
             pathType: Prefix
             backend:
               service:
                 name: account-clusterip-srv
                 port:
-                  number: 25565
-          - path: "/eventbus"
+                  number: 80
+          - path: /eventbus
             pathType: Prefix
             backend:
               service:
                 name: nats-clusterip-srv
                 port:
                   number: 4222
-          - path : "/api/video"
+          - path : /api/video
             pathType: Prefix
             backend:
               service:
                 name: videoservice-clusterip-srv
                 port:
-                  number: 25565
+                  number: 80
 
           
 

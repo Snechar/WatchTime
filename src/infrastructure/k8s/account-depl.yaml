@@ -15,8 +15,6 @@ spec:
       containers:
         - name: account
           image: snechar/accountmicroservice:latest
-          ports:
-          - containerPort: 80
           resources:
           # You need to specify the metric the HPA object will reference
           # kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
